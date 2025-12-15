@@ -91,7 +91,7 @@ col_izq, col_der = st.columns(2)
 # COLUMNA IZQUIERDA
 # ==========================
 with col_izq:
-    st.subheader("Target Club")
+    st.subheader("Club a comparar")
 
     liga_target = st.selectbox(
         "Liga del target club:",
@@ -113,7 +113,6 @@ with col_izq:
         clubs_target
     )
     club_target_df = df[df["club_name"] == target_club]
-    print("Target club data:", club_target_df)
 
 # ==========================
 # COLUMNA DERECHA
@@ -180,9 +179,11 @@ import mplcursors
 st.divider()
 st.subheader("Resultados")
 
-st.write(f"**Target Club:** {target_club}")
-st.write(f"**Ligas comparadas:** {ligas_comparar if ligas_comparar else 'Todas'}")
-st.write(f"**Clubes tras filtros:** {len(df_filtrado)}")
+st.write(f"**Club a comparar:** {target_club}")
+# hacer que saga la liga sin [' y ']
+ligas_comparar_str = ", ".join(ligas_comparar) if ligas_comparar else "Todas"
+st.write(f"**Ligas a comparar:** {ligas_comparar_str}")
+st.write(f"**Número de clubes tras filtros:** {len(df_filtrado)}")
 df = df_filtrado.copy()
 # ==========================
 # PARETO FRONTIER PLOT
@@ -192,7 +193,7 @@ if not club_target_df.empty:
     # Comprobar si ya está en df_filtrado
     if target_club not in df_filtrado["club_name"].values:
         # Añadirlo al DataFrame filtrado
-        df = pd.concat([df_filtrado, club_target_df], ignore_index=True)
+        df = pd.concat([df, club_target_df], ignore_index=True)
 else:
     st.warning(f"No se encontró el club objetivo: {target_club}")
 
@@ -379,8 +380,6 @@ W_A, R_A = float(A_point["win_rate"]), float(A_point["return"])
 B_point = df.loc[df["win_rate"].idxmax()]
 W_B, R_B = float(B_point["win_rate"]), float(B_point["return"])
 
-print("Max Return:", A_point["club_name"], W_A, R_A)
-print("Max WinRate:", B_point["club_name"], W_B, R_B)
 
 # Define R(W) = A - B * exp(γ W)
 gamma = 0.05 
@@ -392,17 +391,10 @@ B = (R_A - R_B) / den
 # Calculate A
 A_param = R_A + B * np.exp(gamma * W_A)
 
-print("A_param:", A_param)
-print("B:", B)
-print("gamma:", gamma)
 
 # Generate curve
 x_curve = np.linspace(df["win_rate"].min(), df["win_rate"].max(), 400)
 y_curve = A_param - B * np.exp(gamma * x_curve)
-
-# Check
-print("R(W_A) curve:", A_param - B * np.exp(gamma * W_A))
-print("R(W_B) curve:", A_param - B * np.exp(gamma * W_B))
 
 # Scatter base
 fig = px.scatter(
