@@ -9,6 +9,8 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
+import mplcursors
+
 
 
 def load_logo(url, zoom=0.08):
@@ -16,10 +18,7 @@ def load_logo(url, zoom=0.08):
     img = Image.open(BytesIO(response.content))
     return OffsetImage(img, zoom=zoom)
 
-
-# =========================
 # FUNCIONES AUXILIARES
-# =========================
 def efficient_frontier(df):
     """
     Devuelve los puntos no dominados (Pareto óptimos)
@@ -77,9 +76,7 @@ df = df[cols]
 df = df.drop(columns=["domestic_competition_id"])
 
 
-# ==========================
 # DATOS BASE
-# ==========================
 ligas = sorted(df["league_name"].dropna().unique().tolist())
 todos_los_clubes = sorted(df["club_name"].dropna().unique().tolist())
 
@@ -87,9 +84,7 @@ st.title("Comparador de clubes")
 
 col_izq, col_der = st.columns(2)
 
-# ==========================
 # COLUMNA IZQUIERDA
-# ==========================
 with col_izq:
     st.subheader("Club a comparar")
 
@@ -114,9 +109,7 @@ with col_izq:
     )
     club_target_df = df[df["club_name"] == target_club]
 
-# ==========================
 # COLUMNA DERECHA
-# ==========================
 with col_der:
     st.subheader("Comparación")
 
@@ -130,9 +123,8 @@ with col_der:
     else:
         df_comparar = df.copy()
 
-    # --------------------------
+    
     # FILTROS
-    # --------------------------
     st.subheader("Filtros")
 
     # Profitability -> columna "return"
@@ -169,12 +161,9 @@ with col_der:
         df_filtrado = df_filtrado[df_filtrado["is_profitable"] == True]
 
 
-# ==========================
 # RESULTADOS
-# ==========================
 if df_filtrado.empty:
     st.warning("No se encontraron clubes que cumplan los criterios seleccionados.")
-import mplcursors
 
 st.divider()
 st.subheader("Resultados")
@@ -185,9 +174,8 @@ ligas_comparar_str = ", ".join(ligas_comparar) if ligas_comparar else "Todas"
 st.write(f"**Ligas a comparar:** {ligas_comparar_str}")
 st.write(f"**Número de clubes tras filtros:** {len(df_filtrado)}")
 df = df_filtrado.copy()
-# ==========================
+
 # PARETO FRONTIER PLOT
-# ==========================
 
 if not club_target_df.empty:
     # Comprobar si ya está en df_filtrado
@@ -364,11 +352,7 @@ fig.update_yaxes(tickformat=",.0f")
 st.plotly_chart(fig, use_container_width=True)
 
 
-
-
-# ==========================
-# SLIDING FRONTIER
-# ==========================
+# Frontier
 df = df_filtrado.copy()
 df = df.dropna(subset=["win_rate", "return", "club_name"])
 
@@ -386,15 +370,32 @@ gamma = 0.05
 
 # Calculate B
 den = np.exp(gamma * W_B) - np.exp(gamma * W_A)
-B = (R_A - R_B) / den
+B_param = (R_A - R_B) / den
 
 # Calculate A
-A_param = R_A + B * np.exp(gamma * W_A)
-
+A_param = R_A + B_param * np.exp(gamma * W_A)
 
 # Generate curve
 x_curve = np.linspace(df["win_rate"].min(), df["win_rate"].max(), 400)
-y_curve = A_param - B * np.exp(gamma * x_curve)
+y_curve = A_param - B_param * np.exp(gamma * x_curve)
+
+# Shift curve UP so it covers Pareto points
+pareto_df = df.sort_values("win_rate", ascending=False)
+best_return = -np.inf
+pareto_points = []
+
+for _, r in pareto_df.iterrows():
+    if r["return"] > best_return:
+        pareto_points.append(r)
+        best_return = r["return"]
+
+pareto_df = pd.DataFrame(pareto_points)
+
+pareto_df["curve_pred"] = A_param - B_param * np.exp(gamma * pareto_df["win_rate"])
+upward_shift = max(0, max(pareto_df["return"] - pareto_df["curve_pred"]))
+A_param_shifted = A_param + upward_shift
+
+y_curve = A_param_shifted - B_param * np.exp(gamma * x_curve)
 
 # Scatter base
 fig = px.scatter(
@@ -441,7 +442,7 @@ fig.add_trace(go.Scatter(
     name="Max Win Rate"
 ))
 
-# Reference liens (optional)
+# Reference lines (optional)
 fig.add_hline(y=0, line_color='black', line_width=1, line_dash='dash')
 fig.add_vline(x=50, line_color='black', line_width=1, line_dash='dash')
 
@@ -494,9 +495,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 
-# ==========================
 # TABLA DE COMPARACIÓN DE KPIs
-# ==========================
 st.subheader("Comparación de Clubes — KPIs Relevantes")
 
 # Selecciona las columnas más relevantes
