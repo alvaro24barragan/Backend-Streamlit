@@ -1,0 +1,31 @@
+club_id,games_played,wins,win_rate,club_name,domestic_competition_id,total_income,total_spent_transfer_fees,club_logo_url,total_spent_wages,return,is_profitable,total_spent
+506.0,678,435,64.15929203539822,Juventus Football Club,IT1,890420000.0,1163550000.0,https://cdn.sofifa.net/teams/45/60.png,24342000.0,-297472000.0,False,1187892000.0
+6195.0,640,370,57.8125,Società Sportiva Calcio Napoli,IT1,337030000.0,860600000.0,https://cdn.sofifa.net/teams/48/60.png,15649000.0,-539219000.0,False,876249000.0
+631.0,685,387,56.4963503649635,Chelsea Football Club,GB1,849240000.0,2259850000.0,https://cdn.sofifa.net/teams/5/60.png,27095000.0,-1437705000.0,False,2286945000.0
+12.0,646,341,52.78637770897833,Associazione Sportiva Roma,IT1,642320000.0,676250000.0,https://cdn.sofifa.net/teams/52/60.png,12275350.0,-46205350.0,False,688525350.0
+398.0,641,324,50.546021840873635,Società Sportiva Lazio S.p.A.,IT1,195590000.0,270215000.0,https://cdn.sofifa.net/teams/46/60.png,12474000.0,-87099000.0,False,282689000.0
+5.0,623,311,49.919743178170144,Associazione Calcio Milan,IT1,316850000.0,803670000.0,https://cdn.sofifa.net/teams/47/60.png,13356000.0,-500176000.0,False,817026000.0
+800.0,595,274,46.05042016806723,Atalanta Bergamasca Calcio S.p.a.,IT1,605425000.0,496060000.0,https://cdn.sofifa.net/teams/39/60.png,7663000.0,101702000.0,True,503723000.0
+430.0,618,278,44.983818770226534,Associazione Calcio Fiorentina,IT1,372210000.0,377180000.0,https://cdn.sofifa.net/teams/110374/60.png,10106550.0,-15076550.0,False,387286550.0
+417.0,513,214,41.71539961013645,Olympique Gymnaste Club Nice Côte d'Azur,FR1,203200000.0,330730000.0,https://cdn.sofifa.net/teams/72/60.png,5083000.0,-132613000.0,False,335813000.0
+1049.0,614,256,41.69381107491857,Valencia Club de Fútbol S. A. D.,ES1,372150000.0,334300000.0,https://cdn.sofifa.net/teams/461/60.png,8867750.0,28982250.0,True,343167750.0
+12321.0,227,89,39.20704845814978,Girona Fútbol Club S. A. D.,ES1,104250000.0,104000000.0,https://cdn.sofifa.net/teams/110062/60.png,2340300.0,-2090300.0,False,106340300.0
+618.0,440,164,37.27272727272727,Association sportive de Saint-Étienne Loire,FR1,134500000.0,53850000.0,https://cdn.sofifa.net/teams/1819/60.png,6144500.0,74505500.0,True,59994500.0
+79.0,434,156,35.944700460829495,Verein für Bewegungsspiele Stuttgart 1893,L1,330490000.0,202610000.0,https://cdn.sofifa.net/teams/36/60.png,4829700.0,123050300.0,True,207439700.0
+533.0,498,179,35.9437751004016,Turn- und Sportgemeinschaft 1899 Hoffenheim Fußball-Spielbetriebs,L1,306450000.0,226788000.0,https://cdn.sofifa.net/teams/10029/60.png,7226000.0,72436000.0,True,234014000.0
+39.0,474,166,35.0210970464135,1. Fußball- und Sportverein Mainz 05,L1,174400000.0,123000000.0,https://cdn.sofifa.net/teams/169/60.png,4937000.0,46463000.0,True,127937000.0
+1025.0,487,160,32.85420944558521,Bologna Football Club 1909,IT1,255900000.0,298715000.0,https://cdn.sofifa.net/teams/189/60.png,5783100.0,-48598100.0,False,304498100.0
+3709.0,500,161,32.2,Getafe Club de Fútbol S.A.D. Team Dubai,ES1,80360000.0,110010000.0,https://cdn.sofifa.net/teams/1860/60.png,4866600.0,-34516600.0,False,114876600.0
+80.0,160,51,31.874999999999996,Verein für Leibesübungen Bochum 1848 Fußballgemeinschaft,L1,26850000.0,4435000.0,https://cdn.sofifa.net/teams/160/60.png,2344450.0,20070550.0,True,6779450.0
+237.0,257,80,31.1284046692607,Real Club Deportivo Mallorca S.A.D.,ES1,51900000.0,54070000.0,https://cdn.sofifa.net/teams/453/60.png,2290000.0,-4460000.0,False,56360000.0
+931.0,301,93,30.89700996677741,Fulham Football Club,GB1,158000000.0,355870000.0,https://cdn.sofifa.net/teams/144/60.png,7163550.0,-205033550.0,False,363033550.0
+2919.0,127,38,29.92125984251969,Associazione Calcio Monza,IT1,13280000.0,104630000.0,https://cdn.sofifa.net/teams/111811/60.png,180750.0,-91530750.0,False,104810750.0
+276.0,402,117,29.1044776119403,Verona Hellas Football Club,IT1,236310000.0,128473000.0,https://cdn.sofifa.net/teams/206/60.png,3713000.0,104124000.0,True,132186000.0
+1162.0,190,55,28.947368421052634,SM Caen,FR1,54850000.0,6000000.0,https://cdn.sofifa.net/teams/210/60.png,2160800.0,46689200.0,True,8160800.0
+252.0,479,138,28.81002087682672,Genoa Cricket and Football Club,IT1,384200000.0,231400000.0,https://cdn.sofifa.net/teams/110556/60.png,5263550.0,147536450.0,True,236663550.0
+14171.0,114,32,28.07017543859649,Thonon Évian Grand Genève FC,FR1,3800000.0,0.0,https://cdn.sofifa.net/teams/111271/60.png,470000.0,3330000.0,True,470000.0
+290.0,66,18,27.27272727272727,Association de la Jeunesse auxerroise,FR1,11450000.0,7550000.0,https://cdn.sofifa.net/teams/57/60.png,924400.0,2975600.0,True,8474400.0
+1005.0,174,47,27.011494252873565,Unione Sportiva Lecce,IT1,56000000.0,42100000.0,https://cdn.sofifa.net/teams/347/60.png,465700.0,13434300.0,True,42565700.0
+749.0,325,86,26.461538461538463,Empoli Football Club S.r.l.,IT1,196650000.0,50900000.0,https://cdn.sofifa.net/teams/1746/60.png,2342050.0,143407950.0,True,53242050.0
+1047.0,42,11,26.190476190476193,Calcio Como,IT1,0.0,43030000.0,https://cdn.sofifa.net/teams/1745/60.png,63000.0,-43093000.0,False,43093000.0
+2921.0,98,21,21.428571428571427,Delfino Pescara 1936,IT1,43250000.0,17784000.0,https://cdn.sofifa.net/teams/200/60.png,849350.0,24616650.0,True,18633350.0
