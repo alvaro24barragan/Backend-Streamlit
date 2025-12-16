@@ -268,7 +268,7 @@ ax.fill_between(
 ax.plot(x_curve_black, y_curve_black, linestyle=":", color="black", linewidth=2)
 
 # PARETO FRONTIER (BLUE)
-pareto_df = df[['win_rate','return','club_name','club_logo_url']].dropna()
+pareto_df = df_filtrado[['win_rate','return','club_name','club_logo_url']].dropna()
 pareto_df = pareto_df.sort_values(by="win_rate", ascending=False)
 
 pts = []
