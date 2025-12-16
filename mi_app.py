@@ -54,14 +54,27 @@ def efficient_frontier(df):
     frontier = frontier.sort_values("win_rate")
     return frontier
 
-
-df = pd.read_csv("club_data.csv")
+# ['L1', 'IT1', 'TR1', 'GB1', 'ES1', 'FR1', 'SC1', 'GR1', 'BE1', 'RU1', 'NL1', 'DK1', 'PO1', 'UKR1']
+#df = pd.read_csv("club_data.csv")
+df = pd.read_csv("all_leagues.csv")
+print("Loaded data with shape:", df.shape)
+print(df["domestic_competition_id"].unique())
+print(df.head())
 league_map = {
     "ES1": "LaLiga",
     "FR1": "Ligue 1",
     "GB1": "Premier League",
     "L1":  "Bundesliga",
-    "IT1": "Serie A"
+    "IT1": "Serie A",
+    "TR1": "Süper Lig",
+    "SC1": "Scottish Premiership",
+    "GR1": "Greek Super League",
+    "BE1": "Belgian Pro League",
+    "RU1": "Russian Premier League",
+    "NL1": "Eredivisie",
+    "DK1": "Danish Superliga",
+    "PO1": "Primeira Liga",
+    "UKR1": "Ukrainian Premier League"
 }
 df["league_name"] = df["domestic_competition_id"].map(
     lambda x: f"{league_map.get(x, 'Unknown')} ({x})"
@@ -173,7 +186,6 @@ st.write(f"**Club a comparar:** {target_club}")
 ligas_comparar_str = ", ".join(ligas_comparar) if ligas_comparar else "Todas"
 st.write(f"**Ligas a comparar:** {ligas_comparar_str}")
 st.write(f"**Número de clubes tras filtros:** {len(df_filtrado)}")
-df = df_filtrado.copy()
 
 # PARETO FRONTIER PLOT
 
@@ -181,7 +193,7 @@ if not club_target_df.empty:
     # Comprobar si ya está en df_filtrado
     if target_club not in df_filtrado["club_name"].values:
         # Añadirlo al DataFrame filtrado
-        df = pd.concat([df, club_target_df], ignore_index=True)
+        df_filtrado = pd.concat([df_filtrado, club_target_df], ignore_index=True)
 else:
     st.warning(f"No se encontró el club objetivo: {target_club}")
 
@@ -191,11 +203,11 @@ else:
 fig = go.Figure()
 
 fig.add_trace(go.Scatter(
-    x=df["win_rate"],
-    y=df["return"],
+    x=df_filtrado["win_rate"],
+    y=df_filtrado["return"],
     mode="markers",
     marker=dict(size=10, color="gray", opacity=0.55),
-    text=df["club_name"],
+    text=df_filtrado["club_name"],
     hovertemplate="<b>%{text}</b><br>Win Rate: %{x:.1f}%<br>Return: €%{y:,.0f}<extra></extra>",
     name="All Clubs"
 ))
@@ -205,18 +217,18 @@ fig.add_hline(y=0, line_color='black', line_width=1, line_dash='dash')
 fig.add_vline(x=50, line_color='black', line_width=1, line_dash='dash')
 
 # DOTTED BLACK FRONTIER (original curve)
-max_idx = df['return'].idxmax()
-max_point = df.loc[max_idx]
+max_idx = df_filtrado['return'].idxmax()
+max_point = df_filtrado.loc[max_idx]
 
 x_max = max_point['win_rate']
 y_max = max_point['return']
 
 # Left part: constant max return
-left_x = np.linspace(df['win_rate'].min(), x_max, 100)
+left_x = np.linspace(df_filtrado['win_rate'].min(), x_max, 100)
 left_y = np.full_like(left_x, y_max)
 
 # Right part: sliding window
-right_df = df[df['win_rate'] > x_max].sort_values(by='win_rate')
+right_df = df_filtrado[df_filtrado['win_rate'] > x_max].sort_values(by='win_rate')
 window_size = 40
 step = 2
 
@@ -243,8 +255,8 @@ x_curve_black = np.concatenate([left_x, x_right])
 y_curve_black = np.concatenate([left_y, y_right])
 
 # Red shading
-y_min_data = float(df['return'].min())
-y_floor = y_min_data - 0.05 * (df['return'].max() - y_min_data)
+y_min_data = float(df_filtrado['return'].min())
+y_floor = y_min_data - 0.05 * (df_filtrado['return'].max() - y_min_data)
 
 fig.add_trace(
     go.Scatter(
@@ -270,7 +282,7 @@ fig.add_trace(
 )
 
 # TRUE PARETO FRONTIER (BLUE LINE)
-pareto_df = df[['win_rate','return','club_name']].rename(
+pareto_df = df_filtrado[['win_rate','return','club_name']].rename(
     columns={"club_name_financial": "club_name"}
 ).dropna()
 
@@ -323,7 +335,7 @@ fig.add_trace(go.Scatter(
     textposition="top center",
     name="Max Return"
 ))
-club_objetivo = df[df["club_name"] == target_club].iloc[0]
+club_objetivo = df_filtrado[df_filtrado["club_name"] == target_club].iloc[0]
 
 fig.add_trace(go.Scatter(
     x=[club_objetivo["win_rate"]],
@@ -351,17 +363,16 @@ fig.update_xaxes(tickformat=".0f")
 fig.update_yaxes(tickformat=",.0f")
 st.plotly_chart(fig, use_container_width=True)
 
-
-# Frontier
-df = df_filtrado.copy()
-df = df.dropna(subset=["win_rate", "return", "club_name"])
+####################################################
+# RoP Frontier Model — Exponential Efficient Frontier
+df_filtrado = df_filtrado.dropna(subset=["win_rate", "return", "club_name"])
 
 # Punto A: máxima rentabilidad
-A_point = df.loc[df["return"].idxmax()]
+A_point = df_filtrado.loc[df_filtrado["return"].idxmax()]
 W_A, R_A = float(A_point["win_rate"]), float(A_point["return"])
 
 # Punto B: máximo win rate
-B_point = df.loc[df["win_rate"].idxmax()]
+B_point = df_filtrado.loc[df_filtrado["win_rate"].idxmax()]
 W_B, R_B = float(B_point["win_rate"]), float(B_point["return"])
 
 
@@ -376,11 +387,11 @@ B_param = (R_A - R_B) / den
 A_param = R_A + B_param * np.exp(gamma * W_A)
 
 # Generate curve
-x_curve = np.linspace(df["win_rate"].min(), df["win_rate"].max(), 400)
+x_curve = np.linspace(df_filtrado["win_rate"].min(), df_filtrado["win_rate"].max(), 400)
 y_curve = A_param - B_param * np.exp(gamma * x_curve)
 
 # Shift curve UP so it covers Pareto points
-pareto_df = df.sort_values("win_rate", ascending=False)
+pareto_df = df_filtrado.sort_values("win_rate", ascending=False)
 best_return = -np.inf
 pareto_points = []
 
@@ -399,7 +410,7 @@ y_curve = A_param_shifted - B_param * np.exp(gamma * x_curve)
 
 # Scatter base
 fig = px.scatter(
-    df,
+    df_filtrado,
     x="win_rate",
     y="return",
     hover_name="club_name",
@@ -458,8 +469,8 @@ fig.update_xaxes(tickformat=".0f")
 fig.update_yaxes(tickformat=",.0f")
 
 # Red Area — INEFFICIENT REGION (Below frontier)
-y_min_data = float(df["return"].min())
-y_floor = y_min_data - 0.05 * (df["return"].max() - y_min_data)
+y_min_data = float(df_filtrado["return"].min())
+y_floor = y_min_data - 0.05 * (df_filtrado["return"].max() - y_min_data)
 
 # Lower line
 fig.add_trace(go.Scatter(
@@ -482,7 +493,15 @@ fig.add_trace(go.Scatter(
     hoverinfo="skip",
     showlegend=False
 ))
-
+fig.add_trace(go.Scatter(
+    x=[club_objetivo["win_rate"]],
+    y=[club_objetivo["return"]],
+    mode="markers+text",
+    marker=dict(size=16, color="gold", symbol="star"),
+    text=[club_objetivo["club_name"]],
+    textposition="top center",
+    name="Target Club"
+))
 st.plotly_chart(fig, use_container_width=True)
 
 
