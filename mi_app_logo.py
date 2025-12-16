@@ -166,13 +166,35 @@ with col_der:
             float(df["win_rate"].max())
         )
     )
+    # Minimum games played -> columna "games_played"
+    min_games = st.number_input(
+        "Minimum games played",
+        min_value=0,
+        max_value=int(df["games_played"].max()),
+        value=20,
+        step=1
+    )
+    # Maximum total spent -> columna "total_spent"
+    max_spent_millions = st.number_input(
+        "Maximum total spent (M€)",
+        min_value=0,
+        max_value=int(df["total_spent"].max() / 1_000_000),
+        value= int(df["total_spent"].max() / 1_000_000),
+        step=1
+    )
+
+    # Convertir a euros para filtrar
+    max_spent = (max_spent_millions+1) * 1_000_000
+
 
     # Filtro opcional: solo clubs rentables
     solo_rentables = st.checkbox("Solo clubs rentables")
 
     df_filtrado = df_comparar[
         (df_comparar["return"].between(*profitability)) &
-        (df_comparar["win_rate"].between(*winrate))
+        (df_comparar["win_rate"].between(*winrate)) &
+        (df_comparar["games_played"] >= min_games) &
+        (df_comparar["total_spent"] <= max_spent)
     ]
 
     if solo_rentables:

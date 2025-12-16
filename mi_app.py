@@ -11,8 +11,6 @@ import plotly.express as px
 import numpy as np
 import mplcursors
 
-
-
 def load_logo(url, zoom=0.08):
     response = requests.get(url)
     img = Image.open(BytesIO(response.content))
@@ -54,10 +52,10 @@ def efficient_frontier(df):
     frontier = frontier.sort_values("win_rate")
     return frontier
 
-# ['L1', 'IT1', 'TR1', 'GB1', 'ES1', 'FR1', 'SC1', 'GR1', 'BE1', 'RU1', 'NL1', 'DK1', 'PO1', 'UKR1']
 #df = pd.read_csv("club_data.csv")
 df = pd.read_csv("all_leagues.csv")
 print("Loaded data with shape:", df.shape)
+print("Columns:", df.columns.tolist())
 print(df["domestic_competition_id"].unique())
 print(df.head())
 league_map = {
@@ -162,13 +160,37 @@ with col_der:
         )
     )
 
+    # Minimum games played -> columna "games_played"
+    min_games = st.number_input(
+        "Minimum games played",
+        min_value=0,
+        max_value=int(df["games_played"].max()),
+        value=20,
+        step=1
+    )
+    # Maximum total spent -> columna "total_spent"
+    max_spent_millions = st.number_input(
+        "Maximum total spent (M€)",
+        min_value=0,
+        max_value=int(df["total_spent"].max() / 1_000_000),
+        value= int(df["total_spent"].max() / 1_000_000),
+        step=1
+    )
+
+    # Convertir a euros para filtrar
+    max_spent = (max_spent_millions+1) * 1_000_000
+
+
     # Filtro opcional: solo clubs rentables
     solo_rentables = st.checkbox("Solo clubs rentables")
 
     df_filtrado = df_comparar[
         (df_comparar["return"].between(*profitability)) &
-        (df_comparar["win_rate"].between(*winrate))
+        (df_comparar["win_rate"].between(*winrate)) &
+        (df_comparar["games_played"] >= min_games) &
+        (df_comparar["total_spent"] <= max_spent)
     ]
+
 
     if solo_rentables:
         df_filtrado = df_filtrado[df_filtrado["is_profitable"] == True]
@@ -198,7 +220,9 @@ else:
     st.warning(f"No se encontró el club objetivo: {target_club}")
 
 
+logo_df = df_filtrado.dropna(subset=["club_logo_url"])
 
+####################################################
 # BASE FIGURE (GRAY POINTS)
 fig = go.Figure()
 
@@ -347,8 +371,6 @@ fig.add_trace(go.Scatter(
     name="Target Club"
 ))
 
-
-
 # LAYOUT
 fig.update_layout(
     template="plotly_white",
@@ -362,6 +384,9 @@ fig.update_layout(
 fig.update_xaxes(tickformat=".0f")
 fig.update_yaxes(tickformat=",.0f")
 st.plotly_chart(fig, use_container_width=True)
+
+
+
 
 ####################################################
 # RoP Frontier Model — Exponential Efficient Frontier
